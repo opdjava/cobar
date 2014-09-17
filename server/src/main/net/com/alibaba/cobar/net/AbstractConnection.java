@@ -32,10 +32,12 @@ import com.alibaba.cobar.net.buffer.BufferQueue;
 import com.alibaba.cobar.util.TimeUtil;
 
 /**
+ * 抽象连接
+ * 
  * @author xianmao.hexm
  */
 public abstract class AbstractConnection implements NIOConnection {
-    private static final int OP_NOT_READ = ~SelectionKey.OP_READ;
+    private static final int OP_NOT_READ = ~SelectionKey.OP_READ;//取反
     private static final int OP_NOT_WRITE = ~SelectionKey.OP_WRITE;
 
     protected final SocketChannel channel;

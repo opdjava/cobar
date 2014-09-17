@@ -25,15 +25,17 @@ import com.alibaba.cobar.config.ErrorCode;
 import com.alibaba.cobar.util.TimeUtil;
 
 /**
+ * 后端连接
+ * 
  * @author xianmao.hexm
  */
 public abstract class BackendConnection extends AbstractConnection {
 
     protected long id;
-    protected String host;
-    protected int port;
-    protected int localPort;
-    protected long idleTimeout;
+    protected String host;//地址
+    protected int port;//端口
+    protected int localPort;//本地端口
+    protected long idleTimeout;//空闲超时
     protected NIOConnector connector;
     protected NIOHandler handler;
     protected boolean isFinishConnect;
@@ -90,11 +92,21 @@ public abstract class BackendConnection extends AbstractConnection {
         this.connector = connector;
     }
 
+    /**
+     * selector注册channel
+     * @param selector
+     * @throws IOException
+     */
     public void connect(Selector selector) throws IOException {
         channel.register(selector, SelectionKey.OP_CONNECT, this);
         channel.connect(new InetSocketAddress(host, port));
     }
 
+    /**
+     * 建立连接
+     * @return
+     * @throws IOException
+     */
     public boolean finishConnect() throws IOException {
         if (channel.isConnectionPending()) {
             channel.finishConnect();

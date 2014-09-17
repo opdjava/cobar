@@ -92,6 +92,10 @@ public final class NIOProcessor {
         reactor.startup();
     }
 
+    /**
+     * 添加到读反应器
+     * @param c
+     */
     public void postRegister(NIOConnection c) {
         reactor.postRegister(c);
     }

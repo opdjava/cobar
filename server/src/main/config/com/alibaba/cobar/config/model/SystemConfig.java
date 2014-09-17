@@ -40,27 +40,27 @@ public final class SystemConfig {
     private static final int DEFAULT_PARSER_COMMENT_VERSION = 50148;
     private static final int DEFAULT_SQL_RECORD_COUNT = 10;
 
-    private int serverPort;
-    private int managerPort;
-    private String charset;
-    private int processors;
-    private int processorHandler;
-    private int processorExecutor;
-    private int initExecutor;
-    private int timerExecutor;
-    private int managerExecutor;
-    private long idleTimeout;
-    private long processorCheckPeriod;
-    private long dataNodeIdleCheckPeriod;
-    private long dataNodeHeartbeatPeriod;
-    private String clusterHeartbeatUser;
-    private String clusterHeartbeatPass;
-    private long clusterHeartbeatPeriod;
-    private long clusterHeartbeatTimeout;
-    private int clusterHeartbeatRetry;
-    private int txIsolation;
-    private int parserCommentVersion;
-    private int sqlRecordCount;
+    private int serverPort;//宽口
+    private int managerPort;//管理端口
+    private String charset;//编码
+    private int processors;//处理器内核数
+    private int processorHandler;//前端处理线程,server与app
+    private int processorExecutor;//后端处理线程,server与mysql
+    private int initExecutor;//处理初始化任务
+    private int timerExecutor;//处理定时任务
+    private int managerExecutor;//处理管理端 9066端口的线程
+    private long idleTimeout;//空闲超时
+    private long processorCheckPeriod;//处理器检测周期
+    private long dataNodeIdleCheckPeriod;//数据节点空闲检测周期
+    private long dataNodeHeartbeatPeriod;//数据节点心跳周期
+    private String clusterHeartbeatUser;//集群心跳账户
+    private String clusterHeartbeatPass;//集群心跳密码
+    private long clusterHeartbeatPeriod;//集群心跳周期
+    private long clusterHeartbeatTimeout;//集群心跳超时
+    private int clusterHeartbeatRetry;//集群心跳重试
+    private int txIsolation;//事务隔离级别
+    private int parserCommentVersion;//编译解释版本
+    private int sqlRecordCount;//sql记录数
 
     public SystemConfig() {
         this.serverPort = DEFAULT_PORT;

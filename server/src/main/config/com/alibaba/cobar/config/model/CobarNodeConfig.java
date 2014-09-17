@@ -16,6 +16,8 @@
 package com.alibaba.cobar.config.model;
 
 /**
+ * cobar节点配置
+ * 
  * @author haiqing.zhuhq 2012-3-21
  * @author xianmao.hexm
  */
@@ -33,6 +35,10 @@ public final class CobarNodeConfig {
         this.weight = weight;
     }
 
+    /**
+     * 名称
+     * @return
+     */
     public String getName() {
         return name;
     }
@@ -41,6 +47,10 @@ public final class CobarNodeConfig {
         this.name = name;
     }
 
+    /**
+     * 地址
+     * @return
+     */
     public String getHost() {
         return host;
     }
@@ -49,6 +59,10 @@ public final class CobarNodeConfig {
         this.host = host;
     }
 
+    /**
+     * 端口
+     * @return
+     */
     public int getPort() {
         return port;
     }
@@ -57,6 +71,10 @@ public final class CobarNodeConfig {
         this.port = port;
     }
 
+    /**
+     * 权重
+     * @return
+     */
     public int getWeight() {
         return weight;
     }

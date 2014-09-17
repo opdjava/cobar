@@ -36,6 +36,8 @@ import com.alibaba.cobar.config.util.ConfigUtil;
 import com.alibaba.cobar.util.SplitUtil;
 
 /**
+ * 集群配置
+ * 
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class ClusterConfig {

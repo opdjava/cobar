@@ -24,17 +24,24 @@ import com.alibaba.cobar.net.NIOConnector;
 import com.alibaba.cobar.net.buffer.BufferQueue;
 
 /**
+ * 后端连接工厂
+ * 
  * @author xianmao.hexm
  */
 public abstract class BackendConnectionFactory {
 
-    protected int socketRecvBuffer = 16 * 1024;
-    protected int socketSendBuffer = 8 * 1024;
-    protected int packetHeaderSize = 4;
-    protected int maxPacketSize = 16 * 1024 * 1024;
-    protected int writeQueueCapcity = 8;
-    protected long idleTimeout = 8 * 3600 * 1000L;
+    protected int socketRecvBuffer = 16 * 1024;//socket接受缓冲大小
+    protected int socketSendBuffer = 8 * 1024;//socket发射缓冲大小
+    protected int packetHeaderSize = 4;//数据包头大小
+    protected int maxPacketSize = 16 * 1024 * 1024;//最大数据包
+    protected int writeQueueCapcity = 8;//写队列容量
+    protected long idleTimeout = 8 * 3600 * 1000L;//空闲超时
 
+    /**
+     * 打开socket通道,返回通道
+     * @return
+     * @throws IOException
+     */
     protected SocketChannel openSocketChannel() throws IOException {
         SocketChannel channel = null;
         try {
@@ -43,8 +50,8 @@ public abstract class BackendConnectionFactory {
             Socket socket = channel.socket();
             socket.setReceiveBufferSize(socketRecvBuffer);
             socket.setSendBufferSize(socketSendBuffer);
-            socket.setTcpNoDelay(true);
-            socket.setKeepAlive(true);
+            socket.setTcpNoDelay(true);//Nagle算法，将小包缓存组成大包发送
+            socket.setKeepAlive(true);//常连接
         } catch (IOException e) {
             closeChannel(channel);
             throw e;

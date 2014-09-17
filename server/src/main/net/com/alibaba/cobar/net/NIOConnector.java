@@ -27,6 +27,8 @@ import org.apache.log4j.Logger;
 import com.alibaba.cobar.config.ErrorCode;
 
 /**
+ * NIO连接器，处理后端连接，把连接加入到NIO处理器的读反应器
+ * 
  * @author xianmao.hexm
  */
 public final class NIOConnector extends Thread {
@@ -47,19 +49,34 @@ public final class NIOConnector extends Thread {
         this.connectQueue = new LinkedBlockingQueue<BackendConnection>();
     }
 
+    /**
+     * 连接次数
+     * @return
+     */
     public long getConnectCount() {
         return connectCount;
     }
 
+    /**
+     * 设置NIO处理器
+     * @param processors
+     */
     public void setProcessors(NIOProcessor[] processors) {
         this.processors = processors;
     }
 
+    /**
+     * 添加后端连接
+     * @param c
+     */
     public void postConnect(BackendConnection c) {
         connectQueue.offer(c);
         selector.wakeup();
     }
 
+    /**
+     * 处理连接，把连接加入读反应器
+     */
     @Override
     public void run() {
         final Selector selector = this.selector;
@@ -87,6 +104,10 @@ public final class NIOConnector extends Thread {
         }
     }
 
+    /**
+     * 在连接队列里取出后端连接，注册到selector
+     * @param selector
+     */
     private void connect(Selector selector) {
         BackendConnection c = null;
         while ((c = connectQueue.poll()) != null) {
@@ -98,6 +119,11 @@ public final class NIOConnector extends Thread {
         }
     }
 
+    /**
+     * 建立连接，把连接添加到读反应器，取消key
+     * @param key
+     * @param att
+     */
     private void finishConnect(SelectionKey key, Object att) {
         BackendConnection c = (BackendConnection) att;
         try {
@@ -114,6 +140,10 @@ public final class NIOConnector extends Thread {
         }
     }
 
+    /**
+     * 取消该KEY，将从selector中移除
+     * @param key
+     */
     private void clearSelectionKey(SelectionKey key) {
         if (key.isValid()) {
             key.attach(null);
@@ -121,6 +151,10 @@ public final class NIOConnector extends Thread {
         }
     }
 
+    /**
+     * 返回下一个NIO处理器
+     * @return
+     */
     private NIOProcessor nextProcessor() {
         if (++nextProcessor == processors.length) {
             nextProcessor = 0;

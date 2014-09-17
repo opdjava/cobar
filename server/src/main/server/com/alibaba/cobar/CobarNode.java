@@ -21,14 +21,16 @@ import com.alibaba.cobar.config.model.CobarNodeConfig;
 import com.alibaba.cobar.heartbeat.CobarHeartbeat;
 
 /**
+ * cobar节点
+ * 
  * @author xianmao.hexm
  */
 public class CobarNode {
     private static final Logger LOGGER = Logger.getLogger(CobarNode.class);
 
-    private final String name;
-    private final CobarNodeConfig config;
-    private final CobarHeartbeat heartbeat;
+    private final String name;//名称
+    private final CobarNodeConfig config;//cobar节点配置
+    private final CobarHeartbeat heartbeat;//cobar心跳
 
     public CobarNode(CobarNodeConfig config) {
         this.name = config.getName();

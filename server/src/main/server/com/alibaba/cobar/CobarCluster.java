@@ -23,6 +23,8 @@ import com.alibaba.cobar.config.model.ClusterConfig;
 import com.alibaba.cobar.config.model.CobarNodeConfig;
 
 /**
+ * 集群概况
+ * 
  * @author haiqing.zhuhq 2012-3-21
  */
 public final class CobarCluster {
@@ -40,10 +42,18 @@ public final class CobarCluster {
         }
     }
 
+    /**
+     * 集群cobar节点
+     * @return
+     */
     public Map<String, CobarNode> getNodes() {
         return nodes;
     }
 
+    /**
+     * 集群分组
+     * @return
+     */
     public Map<String, List<String>> getGroups() {
         return groups;
     }

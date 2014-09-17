@@ -45,10 +45,10 @@ public class CobarHeartbeat {
     private static final Logger LOGGER = Logger.getLogger(CobarHeartbeat.class);
     private static final Logger HEARTBEAT = Logger.getLogger("heartbeat");
 
-    private final CobarNode node;
-    private final AtomicBoolean isStop;
-    private final AtomicBoolean isChecking;
-    private final CobarDetectorFactory factory;
+    private final CobarNode node;//cobar节点
+    private final AtomicBoolean isStop;//是否停
+    private final AtomicBoolean isChecking;//是否检测中
+    private final CobarDetectorFactory factory;//
     private final HeartbeatRecorder recorder;
     private final ReentrantLock lock;
     private final int maxRetryCount;

@@ -24,6 +24,8 @@ import com.alibaba.cobar.config.model.SystemConfig;
 import com.alibaba.cobar.net.factory.BackendConnectionFactory;
 
 /**
+ * cobar检测器工厂
+ * 
  * @author xianmao.hexm
  */
 public class CobarDetectorFactory extends BackendConnectionFactory {
