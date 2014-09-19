@@ -16,6 +16,7 @@
 package com.alibaba.cobar.statistic;
 
 /**
+ * 命令数
  * @author xianmao.hexm
  */
 public class CommandCount {

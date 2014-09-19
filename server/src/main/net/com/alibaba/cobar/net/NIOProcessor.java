@@ -27,6 +27,7 @@ import com.alibaba.cobar.util.ExecutorUtil;
 import com.alibaba.cobar.util.NameableExecutor;
 
 /**
+ * NIO处理器
  * @author xianmao.hexm
  */
 public final class NIOProcessor {
@@ -37,8 +38,8 @@ public final class NIOProcessor {
     private final String name;
     private final NIOReactor reactor;
     private final BufferPool bufferPool;
-    private final NameableExecutor handler;
-    private final NameableExecutor executor;
+    private final NameableExecutor handler;//前端？
+    private final NameableExecutor executor;//后端?
     private final ConcurrentMap<Long, FrontendConnection> frontends;
     private final ConcurrentMap<Long, BackendConnection> backends;
     private final CommandCount commands;
@@ -53,6 +54,15 @@ public final class NIOProcessor {
         this(name, DEFAULT_BUFFER_SIZE, DEFAULT_BUFFER_CHUNK_SIZE, handler, executor);
     }
 
+    /**
+     * 
+     * @param name
+     * @param buffer 缓冲池大小
+     * @param chunk 缓冲池块大小
+     * @param handler 前端处理线程池
+     * @param executor 后端处理线程池
+     * @throws IOException
+     */
     public NIOProcessor(String name, int buffer, int chunk, int handler, int executor) throws IOException {
         this.name = name;
         this.reactor = new NIOReactor(name);
@@ -68,26 +78,49 @@ public final class NIOProcessor {
         return name;
     }
 
+    /**
+     * 缓冲池
+     * @return
+     */
     public BufferPool getBufferPool() {
         return bufferPool;
     }
 
+    /**
+     * 读反应器队列size
+     * @return
+     */
     public int getRegisterQueueSize() {
         return reactor.getRegisterQueue().size();
     }
 
+    /**
+     * 写反应器队列size
+     * @return
+     */
     public int getWriteQueueSize() {
         return reactor.getWriteQueue().size();
     }
 
+    /**
+     * 前端处理线程池
+     * @return
+     */
     public NameableExecutor getHandler() {
         return handler;
     }
 
+    /**
+     * 后端处理线程池
+     * @return
+     */
     public NameableExecutor getExecutor() {
         return executor;
     }
 
+    /**
+     * 启动反应器
+     */
     public void startup() {
         reactor.startup();
     }
@@ -100,46 +133,90 @@ public final class NIOProcessor {
         reactor.postRegister(c);
     }
 
+    /**
+     * 添加到写反应器
+     * @param c
+     */
     public void postWrite(NIOConnection c) {
         reactor.postWrite(c);
     }
 
+    /**
+     * 命令数
+     * @return
+     */
     public CommandCount getCommands() {
         return commands;
     }
 
+    /**
+     * in字符数
+     * @return
+     */
     public long getNetInBytes() {
         return netInBytes;
     }
 
+    /**
+     * 增加in字符数
+     * @param bytes
+     */
     public void addNetInBytes(long bytes) {
         netInBytes += bytes;
     }
 
+    /**
+     * out字符数
+     * @return
+     */
     public long getNetOutBytes() {
         return netOutBytes;
     }
 
+    /**
+     * 增加out字符数
+     * @param bytes
+     */
     public void addNetOutBytes(long bytes) {
         netOutBytes += bytes;
     }
 
+    /**
+     * 读反应器执行次数
+     * @return
+     */
     public long getReactCount() {
         return reactor.getReactCount();
     }
 
+    /**
+     * 添加前端连接
+     * @param c
+     */
     public void addFrontend(FrontendConnection c) {
         frontends.put(c.getId(), c);
     }
 
+    /**
+     * 返回前端连接
+     * @return
+     */
     public ConcurrentMap<Long, FrontendConnection> getFrontends() {
         return frontends;
     }
 
+    /**
+     * 添加后端连接
+     * @param c
+     */
     public void addBackend(BackendConnection c) {
         backends.put(c.getId(), c);
     }
 
+    /**
+     * 返回后端连接
+     * @return
+     */
     public ConcurrentMap<Long, BackendConnection> getBackends() {
         return backends;
     }

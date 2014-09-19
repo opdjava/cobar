@@ -74,42 +74,82 @@ public abstract class AbstractConnection implements NIOConnection {
         return channel;
     }
 
+    /**
+     * 包头size
+     * @return
+     */
     public int getPacketHeaderSize() {
         return packetHeaderSize;
     }
 
+    /**
+     * 设置包头size
+     * @param packetHeaderSize
+     */
     public void setPacketHeaderSize(int packetHeaderSize) {
         this.packetHeaderSize = packetHeaderSize;
     }
 
+    /**
+     * 最大包size
+     * @return
+     */
     public int getMaxPacketSize() {
         return maxPacketSize;
     }
 
+    /**
+     * 设置最大包size
+     * @param maxPacketSize
+     */
     public void setMaxPacketSize(int maxPacketSize) {
         this.maxPacketSize = maxPacketSize;
     }
 
+    /**
+     * 启动时间
+     * @return
+     */
     public long getStartupTime() {
         return startupTime;
     }
 
+    /**
+     * 最后读时间
+     * @return
+     */
     public long getLastReadTime() {
         return lastReadTime;
     }
 
+    /**
+     * 最后写时间
+     * @return
+     */
     public long getLastWriteTime() {
         return lastWriteTime;
     }
 
+    /**
+     * 网络in字符数
+     * @return
+     */
     public long getNetInBytes() {
         return netInBytes;
     }
 
+    /**
+     * 网络out字符数
+     * @return
+     */
     public long getNetOutBytes() {
         return netOutBytes;
     }
 
+    /**
+     * 写尝试
+     * @return
+     */
     public int getWriteAttempts() {
         return writeAttempts;
     }

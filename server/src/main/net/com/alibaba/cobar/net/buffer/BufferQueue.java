@@ -20,6 +20,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * 缓冲队列
  * @author xianmao.hexm
  */
 public final class BufferQueue {
@@ -29,23 +30,39 @@ public final class BufferQueue {
     private int count;
     private final ByteBuffer[] items;
     private final ReentrantLock lock;
-    private final Condition notFull;
+    private final Condition notFull;//条件锁
     private ByteBuffer attachment;
 
+    /**
+     * 
+     * @param capacity 队列容量
+     */
     public BufferQueue(int capacity) {
         items = new ByteBuffer[capacity];
         lock = new ReentrantLock();
         notFull = lock.newCondition();
     }
 
+    /**
+     * 返回附件
+     * @return
+     */
     public ByteBuffer attachment() {
         return attachment;
     }
 
+    /**
+     * 添加附件
+     * @param buffer
+     */
     public void attach(ByteBuffer buffer) {
         this.attachment = buffer;
     }
 
+    /**
+     * 队列大小
+     * @return
+     */
     public int size() {
         final ReentrantLock lock = this.lock;
         lock.lock();
@@ -56,6 +73,11 @@ public final class BufferQueue {
         }
     }
 
+    /**
+     * 加入队列，队列满，阻塞
+     * @param buffer
+     * @throws InterruptedException
+     */
     public void put(ByteBuffer buffer) throws InterruptedException {
         final ByteBuffer[] items = this.items;
         final ReentrantLock lock = this.lock;
@@ -75,6 +97,10 @@ public final class BufferQueue {
         }
     }
 
+    /**
+     * 取出并删除
+     * @return
+     */
     public ByteBuffer poll() {
         final ReentrantLock lock = this.lock;
         lock.lock();
@@ -88,12 +114,20 @@ public final class BufferQueue {
         }
     }
 
+    /**
+     * 加入队列
+     * @param buffer
+     */
     private void insert(ByteBuffer buffer) {
         items[putIndex] = buffer;
         putIndex = inc(putIndex);
         ++count;
     }
 
+    /**
+     * 取出byteBuffer
+     * @return
+     */
     private ByteBuffer extract() {
         final ByteBuffer[] items = this.items;
         ByteBuffer buffer = items[takeIndex];

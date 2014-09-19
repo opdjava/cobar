@@ -75,7 +75,7 @@ public final class NIOReactor {
     }
 
     /**
-     * 反应次数
+     * 读反应器执行次数
      * @return
      */
     final long getReactCount() {
