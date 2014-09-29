@@ -111,6 +111,10 @@ public abstract class FrontendConnection extends AbstractConnection {
         this.idleTimeout = idleTimeout;
     }
 
+    /**
+     * 超时
+     * @return
+     */
     public boolean isIdleTimeout() {
         return TimeUtil.currentTimeMillis() > Math.max(lastWriteTime, lastReadTime) + idleTimeout;
     }
@@ -119,6 +123,10 @@ public abstract class FrontendConnection extends AbstractConnection {
         this.isAccepted = isAccepted;
     }
 
+    /**
+     * 设置NIO处理器，分配读缓存，把此连接加入到NIO处理器前端连接
+     * @param processor
+     */
     public void setProcessor(NIOProcessor processor) {
         this.processor = processor;
         this.readBuffer = processor.getBufferPool().allocate();

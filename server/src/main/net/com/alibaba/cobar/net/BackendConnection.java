@@ -84,6 +84,10 @@ public abstract class BackendConnection extends AbstractConnection {
         this.idleTimeout = idleTimeout;
     }
 
+    /**
+     * 是否超时
+     * @return
+     */
     public boolean isIdleTimeout() {
         return TimeUtil.currentTimeMillis() > Math.max(lastWriteTime, lastReadTime) + idleTimeout;
     }
@@ -118,6 +122,10 @@ public abstract class BackendConnection extends AbstractConnection {
         }
     }
 
+    /**
+     * 设置连接处理器，把当前连接加到处理器后端连接
+     * @param processor
+     */
     public void setProcessor(NIOProcessor processor) {
         this.processor = processor;
         this.readBuffer = processor.getBufferPool().allocate();

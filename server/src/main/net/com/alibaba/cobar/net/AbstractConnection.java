@@ -154,24 +154,40 @@ public abstract class AbstractConnection implements NIOConnection {
         return writeAttempts;
     }
 
+    /**
+     * 返回NIO处理器
+     * @return
+     */
     public NIOProcessor getProcessor() {
         return processor;
     }
 
+    /**
+     * 返回读缓冲
+     * @return
+     */
     public ByteBuffer getReadBuffer() {
         return readBuffer;
     }
 
+    /**
+     * 返回写队列
+     * @return
+     */
     public BufferQueue getWriteQueue() {
         return writeQueue;
     }
 
+    /**
+     * 设置写队列
+     * @param writeQueue
+     */
     public void setWriteQueue(BufferQueue writeQueue) {
         this.writeQueue = writeQueue;
     }
 
     /**
-     * 分配缓存
+     * 从NIO处理器的缓冲池中分配缓存
      */
     public ByteBuffer allocate() {
         return processor.getBufferPool().allocate();
@@ -184,6 +200,9 @@ public abstract class AbstractConnection implements NIOConnection {
         processor.getBufferPool().recycle(buffer);
     }
 
+    /**
+     * 注册selector，通道注册selector
+     */
     @Override
     public void register(Selector selector) throws IOException {
         try {
@@ -196,6 +215,9 @@ public abstract class AbstractConnection implements NIOConnection {
         }
     }
 
+    /**
+     * 读取数据并处理
+     */
     @Override
     public void read() throws IOException {
         ByteBuffer buffer = this.readBuffer;
@@ -209,7 +231,7 @@ public abstract class AbstractConnection implements NIOConnection {
 
         // 处理数据
         int offset = readBufferOffset, length = 0, position = buffer.position();
-        for (;;) {
+        for (;;) {//多数据包，一次处理一个数据包
             length = getPacketLength(buffer, offset);
             if (length == -1) {// 未达到可计算数据包长度的数据
                 if (!buffer.hasRemaining()) {
@@ -246,12 +268,19 @@ public abstract class AbstractConnection implements NIOConnection {
         }
     }
 
+    /**
+     * 写处理
+     * @param data
+     */
     public void write(byte[] data) {
         ByteBuffer buffer = allocate();
         buffer = writeToBuffer(data, buffer);
         write(buffer);
     }
 
+    /**
+     * 如果已锁，回收缓存返回。如果注册，加入写队列，并把当前连接加入到NIO处理器的写反应器，否则回收缓存，关闭连接
+     */
     @Override
     public void write(ByteBuffer buffer) {
         if (isClosed.get()) {
@@ -272,6 +301,9 @@ public abstract class AbstractConnection implements NIOConnection {
         }
     }
 
+    /**
+     * 满足以下两个条件时，切换到基于事件的写操作。1.当前key对写事件不该兴趣。2.write0()返回false。
+     */
     @Override
     public void writeByQueue() throws IOException {
         if (isClosed.get()) {
@@ -291,6 +323,9 @@ public abstract class AbstractConnection implements NIOConnection {
         }
     }
 
+    /**
+     * 满足以下两个条件时，切换到基于队列的写操作。1.write0()返回true。2.发送队列的buffer为空。
+     */
     @Override
     public void writeByEvent() throws IOException {
         if (isClosed.get()) {
@@ -457,6 +492,11 @@ public abstract class AbstractConnection implements NIOConnection {
         }
     }
 
+    /**
+     * 检测写队列是否有附件或数据，如果有写附件数writAttempts++返回false。否则返回true
+     * @return
+     * @throws IOException
+     */
     private boolean write0() throws IOException {
         // 检查是否有遗留数据未写出
         ByteBuffer buffer = writeQueue.attachment();
@@ -513,7 +553,7 @@ public abstract class AbstractConnection implements NIOConnection {
         } finally {
             lock.unlock();
         }
-        processKey.selector().wakeup();
+        processKey.selector().wakeup();//尚未返回的第一个选择操作立即返回
     }
 
     /**
@@ -530,20 +570,27 @@ public abstract class AbstractConnection implements NIOConnection {
         }
     }
 
+    /**
+     * 取消channel注册
+     */
     private void clearSelectionKey() {
         final Lock lock = this.keyLock;
         lock.lock();
         try {
             SelectionKey key = this.processKey;
-            if (key != null && key.isValid()) {
-                key.attach(null);
-                key.cancel();
+            if (key != null && key.isValid()) {//非空，可用
+                key.attach(null);//清空附件
+                key.cancel();//请求取消此key的channel到selector的注册
             }
         } finally {
             lock.unlock();
         }
     }
 
+    /**
+     * 关闭channel
+     * @return
+     */
     private boolean closeSocket() {
         clearSelectionKey();
         SocketChannel channel = this.channel;
