@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 
 /**
+ * mysql数据包封装
  * @author xianmao.hexm
  */
 public class MySQLMessage {
@@ -51,6 +52,10 @@ public class MySQLMessage {
         return data;
     }
 
+    /**
+     * 移动指针位置
+     * @param i
+     */
     public void move(int i) {
         position += i;
     }
@@ -63,14 +68,27 @@ public class MySQLMessage {
         return length > position;
     }
 
+    /**
+     * 读指定位数据
+     * @param i
+     * @return
+     */
     public byte read(int i) {
         return data[i];
     }
 
+    /**
+     * 读1byte数据,指针++
+     * @return
+     */
     public byte read() {
         return data[position++];
     }
 
+    /**
+     * 读2字节数据
+     * @return
+     */
     public int readUB2() {
         final byte[] b = this.data;
         int i = b[position++] & 0xff;
@@ -78,6 +96,10 @@ public class MySQLMessage {
         return i;
     }
 
+    /**
+     * 读3字节数据
+     * @return
+     */
     public int readUB3() {
         final byte[] b = this.data;
         int i = b[position++] & 0xff;
@@ -86,6 +108,10 @@ public class MySQLMessage {
         return i;
     }
 
+    /**
+     * 读4字节数据
+     * @return
+     */
     public long readUB4() {
         final byte[] b = this.data;
         long l = (long) (b[position++] & 0xff);
@@ -95,6 +121,10 @@ public class MySQLMessage {
         return l;
     }
 
+    /**
+     * 读一个整数,int,4字节
+     * @return
+     */
     public int readInt() {
         final byte[] b = this.data;
         int i = b[position++] & 0xff;
@@ -104,10 +134,18 @@ public class MySQLMessage {
         return i;
     }
 
+    /**
+     * 读一个float，4字节
+     * @return
+     */
     public float readFloat() {
         return Float.intBitsToFloat(readInt());
     }
 
+    /**
+     * 读一位long，8字节
+     * @return
+     */
     public long readLong() {
         final byte[] b = this.data;
         long l = (long) (b[position++] & 0xff);
@@ -121,10 +159,18 @@ public class MySQLMessage {
         return l;
     }
 
+    /**
+     * 读一位double,8字节
+     * @return
+     */
     public double readDouble() {
         return Double.longBitsToDouble(readLong());
     }
 
+    /**
+     * 下一数据块数据长度
+     * @return
+     */
     public long readLength() {
         int length = data[position++] & 0xff;
         switch (length) {
@@ -141,6 +187,10 @@ public class MySQLMessage {
         }
     }
 
+    /**
+     * 读position后全部数据
+     * @return
+     */
     public byte[] readBytes() {
         if (position >= length) {
             return EMPTY_BYTES;
@@ -151,6 +201,11 @@ public class MySQLMessage {
         return ab;
     }
 
+    /**
+     * 读position后length长数据
+     * @param length
+     * @return
+     */
     public byte[] readBytes(int length) {
         byte[] ab = new byte[length];
         System.arraycopy(data, position, ab, 0, length);
@@ -158,6 +213,10 @@ public class MySQLMessage {
         return ab;
     }
 
+    /**
+     * 当前位置读到下一个空位0
+     * @return
+     */
     public byte[] readBytesWithNull() {
         final byte[] b = this.data;
         if (position >= length) {
@@ -187,6 +246,10 @@ public class MySQLMessage {
         }
     }
 
+    /**
+     * 读length长数据
+     * @return
+     */
     public byte[] readBytesWithLength() {
         int length = (int) readLength();
         if (length <= 0) {
@@ -198,6 +261,10 @@ public class MySQLMessage {
         return ab;
     }
 
+    /**
+     * 读position到length的数据，默认字符集构建string
+     * @return
+     */
     public String readString() {
         if (position >= length) {
             return null;
@@ -207,6 +274,12 @@ public class MySQLMessage {
         return s;
     }
 
+    /**
+     * 读position到length的数据，指定字符集构建string
+     * @param charset
+     * @return
+     * @throws UnsupportedEncodingException
+     */
     public String readString(String charset) throws UnsupportedEncodingException {
         if (position >= length) {
             return null;
@@ -270,6 +343,10 @@ public class MySQLMessage {
         }
     }
 
+    /**
+     * 读position到length长字符串
+     * @return
+     */
     public String readStringWithLength() {
         int length = (int) readLength();
         if (length <= 0) {
@@ -280,6 +357,12 @@ public class MySQLMessage {
         return s;
     }
 
+    /**
+     * 读position到length长字符串,指定字符集
+     * @param charset
+     * @return
+     * @throws UnsupportedEncodingException
+     */
     public String readStringWithLength(String charset) throws UnsupportedEncodingException {
         int length = (int) readLength();
         if (length <= 0) {
@@ -290,6 +373,10 @@ public class MySQLMessage {
         return s;
     }
 
+    /**
+     * 读时间
+     * @return
+     */
     public java.sql.Time readTime() {
         move(6);
         int hour = read();
@@ -300,6 +387,10 @@ public class MySQLMessage {
         return new Time(cal.getTimeInMillis());
     }
 
+    /**
+     * 读日期
+     * @return
+     */
     public java.util.Date readDate() {
         byte length = read();
         int year = readUB2();
@@ -331,7 +422,7 @@ public class MySQLMessage {
         return new StringBuilder().append(Arrays.toString(data)).toString();
     }
 
-    private static final ThreadLocal<Calendar> localCalendar = new ThreadLocal<Calendar>();
+    private static final ThreadLocal<Calendar> localCalendar = new ThreadLocal<Calendar>();//线程局部变量，没线程一个
 
     private static final Calendar getLocalCalendar() {
         Calendar cal = localCalendar.get();

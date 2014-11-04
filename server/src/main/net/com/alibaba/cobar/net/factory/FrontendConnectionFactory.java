@@ -23,6 +23,7 @@ import com.alibaba.cobar.net.FrontendConnection;
 import com.alibaba.cobar.net.buffer.BufferQueue;
 
 /**
+ * 前端连接工厂
  * @author xianmao.hexm
  */
 public abstract class FrontendConnectionFactory {
@@ -37,6 +38,12 @@ public abstract class FrontendConnectionFactory {
 
     protected abstract FrontendConnection getConnection(SocketChannel channel);
 
+    /**
+     * 设置前端连接基本参数，返回前端连接
+     * @param channel
+     * @return
+     * @throws IOException
+     */
     public FrontendConnection make(SocketChannel channel) throws IOException {
         Socket socket = channel.socket();
         socket.setReceiveBufferSize(socketRecvBuffer);
@@ -52,18 +59,34 @@ public abstract class FrontendConnectionFactory {
         return c;
     }
 
+    /**
+     * get sockedt receive buffer size
+     * @return
+     */
     public int getSocketRecvBuffer() {
         return socketRecvBuffer;
     }
 
+    /**
+     * set socket Receive Buffer Size
+     * @param socketRecvBuffer
+     */
     public void setSocketRecvBuffer(int socketRecvBuffer) {
         this.socketRecvBuffer = socketRecvBuffer;
     }
 
+    /**
+     * get socket send buffer size
+     * @return
+     */
     public int getSocketSendBuffer() {
         return socketSendBuffer;
     }
 
+    /**
+     * set socket send buffer size
+     * @param socketSendBuffer
+     */
     public void setSocketSendBuffer(int socketSendBuffer) {
         this.socketSendBuffer = socketSendBuffer;
     }

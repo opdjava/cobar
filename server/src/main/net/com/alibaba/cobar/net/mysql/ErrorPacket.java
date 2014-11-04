@@ -91,6 +91,10 @@ public class ErrorPacket extends MySQLPacket {
         return buffer;
     }
 
+    /**
+     * 此错误报写入前端连接写队列
+     * @param c
+     */
     public void write(FrontendConnection c) {
         ByteBuffer buffer = c.allocate();
         BufferUtil.writeUB3(buffer, calcPacketSize());

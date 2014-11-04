@@ -142,7 +142,7 @@ public final class NIOProcessor {
     }
 
     /**
-     * 命令数
+     * 各命令执行次数
      * @return
      */
     public CommandCount getCommands() {

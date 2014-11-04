@@ -44,6 +44,9 @@ public class FrontendAuthenticator implements NIOHandler {
         this.source = source;
     }
 
+    /**
+     * 验证用户身份
+     */
     @Override
     public void handle(byte[] data) {
         // check quit packet
@@ -81,10 +84,22 @@ public class FrontendAuthenticator implements NIOHandler {
         }
     }
 
+    /**
+     * 检查用户是否存在，并且可以使用host实行隔离策略。
+     * @param user
+     * @param host
+     * @return
+     */
     protected boolean checkUser(String user, String host) {
         return source.getPrivileges().userExists(user, host);
     }
 
+    /**
+     * 检测密码
+     * @param password
+     * @param user
+     * @return
+     */
     protected boolean checkPassword(byte[] password, String user) {
         String pass = source.getPrivileges().getPassword(user);
 
@@ -122,6 +137,12 @@ public class FrontendAuthenticator implements NIOHandler {
         return true;
     }
 
+    /**
+     * 验证schema,dbname,user下是否有,有返回0
+     * @param schema
+     * @param user
+     * @return
+     */
     protected int checkSchema(String schema, String user) {
         if (schema == null) {
             return 0;
@@ -138,6 +159,10 @@ public class FrontendAuthenticator implements NIOHandler {
         }
     }
 
+    /**
+     * 认证成功，写基本信息到前端连接，写成功标记到连接写队列
+     * @param auth
+     */
     protected void success(AuthPacket auth) {
         source.setAuthenticated(true);
         source.setUser(auth.user);
@@ -157,6 +182,11 @@ public class FrontendAuthenticator implements NIOHandler {
         source.write(source.writeToBuffer(AUTH_OK, buffer));
     }
 
+    /**
+     * 身份认证错误，写错误包
+     * @param errno
+     * @param info
+     */
     protected void failure(int errno, String info) {
         LOGGER.error(source.toString() + info);
         source.writeErrMessage((byte) 2, errno, info);

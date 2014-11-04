@@ -16,6 +16,7 @@
 package com.alibaba.cobar.util;
 
 /**
+ * 随机工具
  * @author xianmao.hexm 2010-1-21 上午10:39:54
  */
 public class RandomUtil {
@@ -36,6 +37,11 @@ public class RandomUtil {
         seed = s;
     }
 
+    /**
+     * 生成随机byte数组
+     * @param size 长度
+     * @return
+     */
     public static final byte[] randomBytes(int size) {
         byte[] bb = bytes;
         byte[] ab = new byte[size];
@@ -45,11 +51,20 @@ public class RandomUtil {
         return ab;
     }
 
+    /**
+     * 在b中返回随机一个
+     * @param b
+     * @return
+     */
     private static byte randomByte(byte[] b) {
         int ran = (int) ((next() & integerMask) >>> 16);
         return b[ran % b.length];
     }
 
+    /**
+     * 根据种子生成数字，种子赋值新数
+     * @return
+     */
     private static long next() {
         long oldSeed = seed;
         long nextSeed = 0L;

@@ -36,6 +36,9 @@ public class FrontendCommandHandler implements NIOHandler {
         this.commands = source.getProcessor().getCommands();
     }
 
+    /**
+     * 根据包类型执行相应命令，记录命令执行次数，data[4]存储命令类型
+     */
     @Override
     public void handle(byte[] data) {
         switch (data[4]) {

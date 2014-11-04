@@ -279,7 +279,7 @@ public abstract class AbstractConnection implements NIOConnection {
     }
 
     /**
-     * 如果已锁，回收缓存返回。如果注册，加入写队列，并把当前连接加入到NIO处理器的写反应器，否则回收缓存，关闭连接
+     * 如果已锁，回收缓冲区返回。如果已注册通道，加入写队列，并把当前连接加入到NIO处理器的写反应器，否则回收缓存，关闭连接
      */
     @Override
     public void write(ByteBuffer buffer) {
@@ -387,7 +387,7 @@ public abstract class AbstractConnection implements NIOConnection {
     }
 
     /**
-     * 把数据写到给定的缓存中，如果满了则提交当前缓存并申请新的缓存。
+     * 把数据写到给定的缓冲区，如果满了则提交当前缓冲区并申请新的缓冲区。
      */
     public ByteBuffer writeToBuffer(byte[] src, ByteBuffer buffer) {
         int offset = 0;

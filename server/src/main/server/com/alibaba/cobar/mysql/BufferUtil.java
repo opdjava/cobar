@@ -18,21 +18,37 @@ package com.alibaba.cobar.mysql;
 import java.nio.ByteBuffer;
 
 /**
+ * 缓冲区读写工具
  * @author xianmao.hexm 2010-9-3 下午02:29:44
  */
 public class BufferUtil {
 
+    /**
+     * 写2字节到缓冲区
+     * @param buffer
+     * @param i
+     */
     public static final void writeUB2(ByteBuffer buffer, int i) {
         buffer.put((byte) (i & 0xff));
         buffer.put((byte) (i >>> 8));
     }
 
+    /**
+     * 写3字节到缓冲区
+     * @param buffer
+     * @param i
+     */
     public static final void writeUB3(ByteBuffer buffer, int i) {
         buffer.put((byte) (i & 0xff));
         buffer.put((byte) (i >>> 8));
         buffer.put((byte) (i >>> 16));
     }
 
+    /**
+     * 写4字节到缓冲区
+     * @param buffer
+     * @param i
+     */
     public static final void writeInt(ByteBuffer buffer, int i) {
         buffer.put((byte) (i & 0xff));
         buffer.put((byte) (i >>> 8));
@@ -40,10 +56,20 @@ public class BufferUtil {
         buffer.put((byte) (i >>> 24));
     }
 
+    /**
+     * 写4字节int类型表示的float形式到缓冲区
+     * @param buffer
+     * @param f
+     */
     public static final void writeFloat(ByteBuffer buffer, float f) {
         writeInt(buffer, Float.floatToIntBits(f));
     }
 
+    /**
+     * 写4个字节到缓冲区
+     * @param buffer
+     * @param l
+     */
     public static final void writeUB4(ByteBuffer buffer, long l) {
         buffer.put((byte) (l & 0xff));
         buffer.put((byte) (l >>> 8));
@@ -51,6 +77,11 @@ public class BufferUtil {
         buffer.put((byte) (l >>> 24));
     }
 
+    /**
+     * 写8字节到缓冲区
+     * @param buffer
+     * @param l
+     */
     public static final void writeLong(ByteBuffer buffer, long l) {
         buffer.put((byte) (l & 0xff));
         buffer.put((byte) (l >>> 8));
@@ -62,10 +93,20 @@ public class BufferUtil {
         buffer.put((byte) (l >>> 56));
     }
 
+    /**
+     * 写8个字节long表示的double形式到缓冲区
+     * @param buffer
+     * @param d
+     */
     public static final void writeDouble(ByteBuffer buffer, double d) {
         writeLong(buffer, Double.doubleToLongBits(d));
     }
 
+    /**
+     * 把长度写入到缓冲区，先写一位标记位，<251直接写长度,<0x10000先写252到缓冲区再写2字节,<0x1000000先写253再写3字节,其他先写254再写4字节
+     * @param buffer
+     * @param l
+     */
     public static final void writeLength(ByteBuffer buffer, long l) {
         if (l < 251) {
             buffer.put((byte) l);
@@ -81,11 +122,21 @@ public class BufferUtil {
         }
     }
 
+    /**
+     * 写到缓冲区，结尾写一个0位
+     * @param buffer
+     * @param src
+     */
     public static final void writeWithNull(ByteBuffer buffer, byte[] src) {
         buffer.put(src);
         buffer.put((byte) 0);
     }
 
+    /**
+     * 先写包长度到缓冲区，再写包
+     * @param buffer
+     * @param src
+     */
     public static final void writeWithLength(ByteBuffer buffer, byte[] src) {
         int length = src.length;
         if (length < 251) {
@@ -103,6 +154,12 @@ public class BufferUtil {
         buffer.put(src);
     }
 
+    /**
+     * 如果包为空，写nullValue到缓冲区。不为空，先写包长度到缓冲区，再写包
+     * @param buffer
+     * @param src
+     * @param nullValue
+     */
     public static final void writeWithLength(ByteBuffer buffer, byte[] src, byte nullValue) {
         if (src == null) {
             buffer.put(nullValue);
@@ -111,6 +168,11 @@ public class BufferUtil {
         }
     }
 
+    /**
+     * length<251,返回1,<0x10000L返回3,<0x1000000L返回4,其他返回9
+     * @param length
+     * @return
+     */
     public static final int getLength(long length) {
         if (length < 251) {
             return 1;
@@ -123,6 +185,11 @@ public class BufferUtil {
         }
     }
 
+    /**
+     * src长度<251返回长度+1,<0x10000L返回长度+3,<0x1000000L返回长度+4,其他返回长度+9
+     * @param src
+     * @return
+     */
     public static final int getLength(byte[] src) {
         int length = src.length;
         if (length < 251) {

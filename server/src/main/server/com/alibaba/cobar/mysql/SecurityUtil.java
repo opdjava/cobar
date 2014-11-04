@@ -25,6 +25,13 @@ import java.security.NoSuchAlgorithmException;
  */
 public class SecurityUtil {
 
+    /**
+     * SHA-1加密
+     * @param pass
+     * @param seed
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
     public static final byte[] scramble411(byte[] pass, byte[] seed) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-1");
         byte[] pass1 = md.digest(pass);
@@ -39,6 +46,12 @@ public class SecurityUtil {
         return pass3;
     }
 
+    /**
+     * 解密
+     * @param pass
+     * @param seed
+     * @return
+     */
     public static final String scramble323(String pass, String seed) {
         if ((pass == null) || (pass.length() == 0)) {
             return pass;

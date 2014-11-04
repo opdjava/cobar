@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 字符集工具
  * @author xianmao.hexm 2010-8-3 下午06:12:53
  */
 public class CharsetUtil {
@@ -130,11 +131,21 @@ public class CharsetUtil {
         CHARSET_TO_INDEX.put("utf-8", 33);
     }
 
+    /**
+     * 根据字符集编号，返回字符集
+     * @param index
+     * @return
+     */
     public static final String getCharset(int index) {
         if(index<0 || index>98) index = 83;
         return INDEX_TO_CHARSET[index];
     }
 
+    /**
+     * 根据字符集，返回字符集编号
+     * @param charset
+     * @return
+     */
     public static final int getIndex(String charset) {
         if (charset == null || charset.length() == 0) {
             return 0;

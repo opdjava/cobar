@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import com.alibaba.cobar.net.factory.FrontendConnectionFactory;
 
 /**
+ * NIO接收器
  * @author xianmao.hexm
  */
 public final class NIOAcceptor extends Thread {

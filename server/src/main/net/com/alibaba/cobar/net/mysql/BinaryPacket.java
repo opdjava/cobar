@@ -24,6 +24,7 @@ import com.alibaba.cobar.mysql.StreamUtil;
 import com.alibaba.cobar.net.FrontendConnection;
 
 /**
+ * 二进制数据包
  * @author xianmao.hexm 2011-5-6 上午10:58:33
  */
 public class BinaryPacket extends MySQLPacket {
@@ -37,6 +38,11 @@ public class BinaryPacket extends MySQLPacket {
 
     public byte[] data;
 
+    /**
+     * 从流中读出数据包
+     * @param in
+     * @throws IOException
+     */
     public void read(InputStream in) throws IOException {
         packetLength = StreamUtil.readUB3(in);
         packetId = StreamUtil.read(in);
@@ -45,6 +51,9 @@ public class BinaryPacket extends MySQLPacket {
         data = ab;
     }
 
+    /**
+     * 把数据包写到buffer中，如果buffer满了就把buffer通过前端连接写出。
+     */
     @Override
     public ByteBuffer write(ByteBuffer buffer, FrontendConnection c) {
         buffer = c.checkWriteBuffer(buffer, c.getPacketHeaderSize());
@@ -54,11 +63,17 @@ public class BinaryPacket extends MySQLPacket {
         return buffer;
     }
 
+    /**
+     * 计算数据包大小，不包含包头长度
+     */
     @Override
     public int calcPacketSize() {
         return data == null ? 0 : data.length;
     }
 
+    /**
+     * 取得数据包信息
+     */
     @Override
     protected String getPacketInfo() {
         return "MySQL Binary Packet";

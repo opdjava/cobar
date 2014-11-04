@@ -22,6 +22,7 @@ import com.alibaba.cobar.mysql.MySQLMessage;
 import com.alibaba.cobar.net.FrontendConnection;
 
 /**
+ * 握手数据包
  * From server to client during initial handshake.
  * 
  * <pre>
@@ -55,6 +56,10 @@ public class HandshakePacket extends MySQLPacket {
     public int serverStatus;
     public byte[] restOfScrambleBuff;
 
+    /**
+     * 读二进制数据包信息，并赋值到本包
+     * @param bin
+     */
     public void read(BinaryPacket bin) {
         packetLength = bin.packetLength;
         packetId = bin.packetId;
@@ -70,6 +75,10 @@ public class HandshakePacket extends MySQLPacket {
         restOfScrambleBuff = mm.readBytesWithNull();
     }
 
+    /**
+     * 读数据包信息，并赋值到本包
+     * @param data
+     */
     public void read(byte[] data) {
         MySQLMessage mm = new MySQLMessage(data);
         packetLength = mm.readUB3();
@@ -85,6 +94,11 @@ public class HandshakePacket extends MySQLPacket {
         restOfScrambleBuff = mm.readBytesWithNull();
     }
 
+    /**
+     * 写本包信息到前端连接写反应器
+     * 
+     * @param c
+     */
     public void write(FrontendConnection c) {
         ByteBuffer buffer = c.allocate();
         BufferUtil.writeUB3(buffer, calcPacketSize());

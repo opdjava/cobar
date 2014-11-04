@@ -21,6 +21,7 @@ import com.alibaba.cobar.net.BackendConnection;
 import com.alibaba.cobar.net.FrontendConnection;
 
 /**
+ * Mysql数据包
  * @author xianmao.hexm
  */
 public abstract class MySQLPacket {

@@ -55,6 +55,10 @@ public class AuthPacket extends MySQLPacket {
     public byte[] password;
     public String database;
 
+    /**
+     * 读数据包中基本值,比如用户名密码
+     * @param data
+     */
     public void read(byte[] data) {
         MySQLMessage mm = new MySQLMessage(data);
         packetLength = mm.readUB3();
@@ -78,6 +82,11 @@ public class AuthPacket extends MySQLPacket {
         }
     }
 
+    /**
+     * 写包基本值到流
+     * @param out
+     * @throws IOException
+     */
     public void write(OutputStream out) throws IOException {
         StreamUtil.writeUB3(out, calcPacketSize());
         StreamUtil.write(out, packetId);

@@ -40,6 +40,7 @@ import com.alibaba.cobar.util.RandomUtil;
 import com.alibaba.cobar.util.TimeUtil;
 
 /**
+ * 前端连接
  * @author xianmao.hexm
  */
 public abstract class FrontendConnection extends AbstractConnection {
@@ -79,6 +80,10 @@ public abstract class FrontendConnection extends AbstractConnection {
         this.id = id;
     }
 
+    /**
+     * 应用的IP
+     * @return
+     */
     public String getHost() {
         return host;
     }
@@ -137,22 +142,42 @@ public abstract class FrontendConnection extends AbstractConnection {
         this.handler = handler;
     }
 
+    /**
+     * 查询处理器
+     * @param queryHandler
+     */
     public void setQueryHandler(FrontendQueryHandler queryHandler) {
         this.queryHandler = queryHandler;
     }
 
+    /**
+     * sql预处理处理器
+     * @param prepareHandler
+     */
     public void setPrepareHandler(FrontendPrepareHandler prepareHandler) {
         this.prepareHandler = prepareHandler;
     }
 
+    /**
+     * 是否已认证
+     * @param isAuthenticated
+     */
     public void setAuthenticated(boolean isAuthenticated) {
         this.isAuthenticated = isAuthenticated;
     }
 
+    /**
+     * 权限提供者
+     * @return
+     */
     public FrontendPrivileges getPrivileges() {
         return privileges;
     }
 
+    /**
+     * 权限提供者
+     * @param privileges
+     */
     public void setPrivileges(FrontendPrivileges privileges) {
         this.privileges = privileges;
     }
@@ -177,10 +202,19 @@ public abstract class FrontendConnection extends AbstractConnection {
         return seed;
     }
 
+    /**
+     * 字符集编号
+     * @return
+     */
     public int getCharsetIndex() {
         return charsetIndex;
     }
 
+    /**
+     * 字符集编号
+     * @param ci
+     * @return
+     */
     public boolean setCharsetIndex(int ci) {
         String charset = CharsetUtil.getCharset(ci);
         if (charset != null) {
@@ -192,10 +226,19 @@ public abstract class FrontendConnection extends AbstractConnection {
         }
     }
 
+    /**
+     * 字符集
+     * @return
+     */
     public String getCharset() {
         return charset;
     }
 
+    /**
+     * 字符集
+     * @param charset
+     * @return
+     */
     public boolean setCharset(String charset) {
         int ci = CharsetUtil.getIndex(charset);
         if (ci > 0) {
@@ -207,10 +250,21 @@ public abstract class FrontendConnection extends AbstractConnection {
         }
     }
 
+    /**
+     * 新建错误包写入此连接写队列
+     * @param errno
+     * @param msg
+     */
     public void writeErrMessage(int errno, String msg) {
         writeErrMessage((byte) 1, errno, msg);
     }
 
+    /**
+     * 新建错误包写入此连接写队列
+     * @param id
+     * @param errno
+     * @param msg
+     */
     public void writeErrMessage(byte id, int errno, String msg) {
         ErrorPacket err = new ErrorPacket();
         err.packetId = id;
@@ -219,6 +273,10 @@ public abstract class FrontendConnection extends AbstractConnection {
         err.write(this);
     }
 
+    /**
+     * 初始化schema
+     * @param data
+     */
     public void initDB(byte[] data) {
         MySQLMessage mm = new MySQLMessage(data);
         mm.position(5);
@@ -253,6 +311,10 @@ public abstract class FrontendConnection extends AbstractConnection {
         }
     }
 
+    /**
+     * 执行查询
+     * @param data
+     */
     public void query(byte[] data) {
         if (queryHandler != null) {
             // 取得语句
@@ -277,6 +339,10 @@ public abstract class FrontendConnection extends AbstractConnection {
         }
     }
 
+    /**
+     * 执行预处理
+     * @param data
+     */
     public void stmtPrepare(byte[] data) {
         if (prepareHandler != null) {
             // 取得语句
@@ -301,6 +367,10 @@ public abstract class FrontendConnection extends AbstractConnection {
         }
     }
 
+    /**
+     * 执行预处理执行
+     * @param data
+     */
     public void stmtExecute(byte[] data) {
         if (prepareHandler != null) {
             prepareHandler.execute(data);
@@ -309,6 +379,10 @@ public abstract class FrontendConnection extends AbstractConnection {
         }
     }
 
+    /**
+     * 关闭预处理
+     * @param data
+     */
     public void stmtClose(byte[] data) {
         if (prepareHandler != null) {
             prepareHandler.close();
@@ -317,10 +391,17 @@ public abstract class FrontendConnection extends AbstractConnection {
         }
     }
 
+    /**
+     * 执行Ping
+     */
     public void ping() {
         write(writeToBuffer(OkPacket.OK, allocate()));
     }
 
+    /**
+     * 执行心跳
+     * @param data
+     */
     public void heartbeat(byte[] data) {
         write(writeToBuffer(OkPacket.OK, allocate()));
     }
@@ -333,6 +414,9 @@ public abstract class FrontendConnection extends AbstractConnection {
         writeErrMessage(ErrorCode.ER_UNKNOWN_COM_ERROR, "Unknown command");
     }
 
+    /**
+     * 空闲检测
+     */
     @Override
     protected void idleCheck() {
         if (isIdleTimeout()) {
@@ -341,10 +425,13 @@ public abstract class FrontendConnection extends AbstractConnection {
         }
     }
 
+    /**
+     * 通道注册selector,发送握手包
+     */
     @Override
     public void register(Selector selector) throws IOException {
         super.register(selector);
-        if (!isClosed.get()) {
+        if (!isClosed.get()) {//没关
             // 生成认证数据
             byte[] rand1 = RandomUtil.randomBytes(8);
             byte[] rand2 = RandomUtil.randomBytes(12);
@@ -370,6 +457,9 @@ public abstract class FrontendConnection extends AbstractConnection {
         }
     }
 
+    /**
+     * 异步处理前端数据，(用户身份验证)
+     */
     @Override
     public void handle(final byte[] data) {
         // 异步处理前端数据
@@ -385,6 +475,10 @@ public abstract class FrontendConnection extends AbstractConnection {
         });
     }
 
+    /**
+     * 获得服务器处理能力标识
+     * @return
+     */
     protected int getServerCapabilities() {
         int flag = 0;
         flag |= Capabilities.CLIENT_LONG_PASSWORD;
@@ -406,6 +500,11 @@ public abstract class FrontendConnection extends AbstractConnection {
         return flag;
     }
 
+    /**
+     * 是否连接被重置
+     * @param t
+     * @return
+     */
     protected boolean isConnectionReset(Throwable t) {
         if (t instanceof IOException) {
             String msg = t.getMessage();
